@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Letter from Mary - 互动绘本阅读</title>
+  <script src="https://metis-online.fbcontent.cn/metis-misc/zgLDUdmazTYc0B4K6Cor.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Comic Sans MS', 'Chalkboard SE', 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #E0F7FA 0%, #E8F5E9 100%); min-height: 100vh; padding-bottom: 120px; }
+    .book-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+    .nav-bar { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 20px; padding: 16px 24px; margin-bottom: 24px; box-shadow: 0 8px 32px rgba(31,38,135,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border: 1px solid rgba(255,255,255,0.5); }
+    .page-image { width: 100%; height: auto; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); margin-bottom: 24px; border: 4px solid white; transition: transform 0.3s; }
+    .page-image:hover { transform: scale(1.01); }
+    .text-container { background: white; border-radius: 24px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 24px; position: relative; overflow: hidden; }
+    .text-container::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: linear-gradient(90deg, #4DB6AC, #81C784, #AED581, #DCE775); }
+    .sentence { font-size: 22px; line-height: 1.8; color: #2D3436; margin-bottom: 16px; }
+    .word { display: inline-block; cursor: pointer; padding: 2px 4px; border-radius: 6px; transition: all 0.2s; }
+    .word:hover { background: #E0F2F1; color: #009688; transform: translateY(-2px); }
+    .word.clicked { background: #009688; color: white; }
+    .word-correct { background: #2ECC71 !important; color: white; }
+    .word-incorrect { background: #FF6B6B !important; color: white; animation: shake 0.5s; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    .controls { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 60px; padding: 20px; background: white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    .btn { padding: 14px 28px; border: none; border-radius: 16px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; color: white; }
+    .btn:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+    .btn:active { transform: scale(0.95); }
+    .btn:disabled { opacity: 0.5; filter: grayscale(100%); cursor: not-allowed; }
+    .btn-primary { background: linear-gradient(135deg, #4DB6AC, #009688); }
+    .btn-secondary { background: linear-gradient(135deg, #81C784, #4CAF50); }
+    .btn-accent { background: linear-gradient(135deg, #FFB74D, #FF9800); }
+    .btn-success { background: linear-gradient(135deg, #AED581, #8BC34A); }
+    .page-indicator { text-align: center; font-size: 18px; font-weight: bold; color: #636E72; margin-bottom: 20px; background: white; padding: 8px 20px; border-radius: 20px; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .title { text-align: center; font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #009688, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 24px; }
+    .chinese-translation { color: #636E72; font-size: 18px; margin-top: 12px; padding-top: 12px; border-top: 2px dashed #F0F0F0; cursor: pointer; }
+    .chinese-translation.hidden { display: none; }
+    .reading-mode { background: white; border-radius: 24px; padding: 32px; margin-bottom: 24px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 2px solid #4DB6AC; }
+    .reading-status { font-size: 24px; font-weight: bold; color: #2D3436; margin-bottom: 16px; }
+    .countdown { font-size: 64px; font-weight: 800; color: #FFB74D; margin: 20px 0; animation: pulse 1s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    .score-display { font-size: 48px; font-weight: 800; background: linear-gradient(135deg, #FFB74D, #FF9800); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 20px 0; }
+    .feedback-item { padding: 12px 16px; margin-bottom: 10px; border-radius: 12px; background: #F8F9FA; display: flex; align-items: center; gap: 12px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
+    .feedback-item:hover { transform: translateX(4px); background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .feedback-item.correct { background: #E8F8F5; border-color: #2ECC71; color: #27AE60; }
+    .feedback-item.incorrect { background: #FDEDEC; border-color: #FF6B6B; color: #C0392B; }
+    .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(45,52,54,0.8); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 2000; animation: fadeIn 0.3s; }
+    .word-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 32px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); z-index: 2001; width: 500px; max-width: 90%; max-height: 85vh; overflow-y: auto; animation: popIn 0.4s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+    .popup-header { text-align: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 2px dashed #F0F0F0; }
+    .popup-word { font-size: 48px; font-weight: 800; color: #2D3436; }
+    .popup-phonetic { font-size: 20px; color: #636E72; background: #F0F0F0; padding: 4px 12px; border-radius: 20px; display: inline-block; }
+    .detail-card { background: #F8F9FA; border-radius: 16px; padding: 16px; margin-bottom: 12px; border-left: 4px solid #4DB6AC; }
+    .detail-label { font-size: 14px; font-weight: bold; color: #B2BEC3; text-transform: uppercase; margin-bottom: 4px; display: block; }
+    .simple-tooltip { position: absolute; background: rgba(45,52,54,0.95); color: white; padding: 8px 16px; border-radius: 12px; font-size: 14px; z-index: 1000; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); white-space: nowrap; transform: translate(-50%, -100%); transition: all 0.2s; opacity: 0; margin-top: -10px; }
+    .simple-tooltip.visible { opacity: 1; transform: translate(-50%, -110%); }
+    .simple-tooltip::after { content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); border-width: 6px 6px 0; border-style: solid; border-color: rgba(45,52,54,0.95) transparent transparent transparent; }
+    @media (max-width: 768px) { .title { font-size: 28px; } .sentence { font-size: 18px; } .btn { padding: 12px 20px; font-size: 14px; } .controls { padding: 16px; gap: 10px; } }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.hidden{display:none}</style></head>
+<body>
+  <div class="book-container">
+    <h1 class="title">✉️ A Letter from Mary</h1>
+    <div class="nav-bar">
+      <div style="font-size: 18px; font-weight: bold; color: #2D3436;">📖 互动绘本阅读</div>
+      <button class="btn btn-accent" id="playFullAudioBtn" style="padding: 8px 16px; font-size: 14px;">🎵 完整故事磨耳朵</button>
+    </div>
+    <div style="text-align: center;"><div class="page-indicator" id="pageIndicator">第 1 页 / 共 18 页</div></div>
+    <div id="bookContent"><img src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/L7NXoGZV4oL7AScRx7C2DH.png" class="page-image"><div class="text-container"><div class="sentence"><span class="word" data-word="A">A</span> <span class="word" data-word="Letter">Letter</span> <span class="word" data-word="to">to</span> <span class="word" data-word="Jenny">Jenny</span> <span class="word" data-word="By">By</span> <span class="word" data-word="Mary">Mary</span></div><div class="chinese-translation hidden">给珍妮的信 作者：玛丽</div></div></div>
+    <div class="reading-mode" id="readingMode" style="display: none;">
+      <div class="reading-status" id="readingStatus">准备跟读</div>
+      <div class="countdown" id="countdown"></div>
+      <div class="score-display" id="scoreDisplay"></div>
+      <div class="stars" id="starsDisplay" style="font-size: 40px; margin: 10px 0;"></div>
+      <div id="feedbackContainer" style="display: none; text-align: left;">
+        <div style="font-weight: bold; margin-bottom: 12px; color: #636E72;">📝 发音详情：</div>
+        <div id="feedbackList"></div>
+        <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: center;">
+          <button class="btn btn-secondary" id="retryBtn">🔄 再试一次</button>
+          <button class="btn btn-primary" id="closeBtn">✅ 完成练习</button>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn btn-secondary" id="prevBtn" disabled="">⬅️ 上一页</button>
+      <button class="btn btn-primary" id="readPageBtn">🔊 朗读本页</button>
+      <button class="btn btn-accent" id="followReadBtn">🎤 跟读挑战</button>
+      <button class="btn btn-success" id="readAllBtn">▶️ 自动播放</button>
+      <button class="btn btn-secondary" id="toggleTransBtn">🈯 显示翻译</button>
+      <button class="btn btn-secondary" id="nextBtn">下一页 ➡️</button>
+    </div>
+  </div>
+
+  <audio id="storyPlayer"></audio>
+  <audio id="wordPlayer"></audio>
+  
+  <script>
+    const bookData = [
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/L7NXoGZV4oL7AScRx7C2DH.png', sentences: [{ en: "A Letter to Jenny By Mary", cn: "给珍妮的信 作者：玛丽" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/YVZWRnWi3c2U7Wkoi7UVHC.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/n7B3dunEPkohG9xpYKNxiR.png', sentences: [{ en: "Dear Jenny,", cn: "亲爱的珍妮：" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/95Wm4zjimYHGUYakHehDm7.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/WJgF8YLs6uXh6EXXnXiYqm.png', sentences: [{ en: "I'm sorry that we can't meet very often.", cn: "很抱歉我们不能经常见面。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/kkd7FuM6xSSGXREuwqcBfX.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/XgMuJXorpM6AvMR8RqT2mj.png', sentences: [{ en: "I am very busy every day.", cn: "我每天都很忙。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/JkPVEKR5t6mxCEH5jZ5Mhe.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/Y3PJ5MtdyiK2L9p5x4uwHX.png', sentences: [{ en: "When the bell rings, the first class starts at 8 a.m.", cn: "铃声一响，第一节课就在早上8点开始了。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/9yCWUX9QJUGZRqZZcgRgLk.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/TPosEyKjod8jzg6cvvDGrM.png', sentences: [{ en: "Every day I have Chinese, maths and English.", cn: "每天我都要上语文课、数学课和英语课。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/MdAe9ZbJFBHf3gffRaYofi.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/QgPGmbVTiVsXkuQUjfL3pb.png', sentences: [{ en: "I don't like maths, but my parents say it's useful, so I must try harder.", cn: "我不喜欢数学，但我的父母说它很有用，所以我必须更加努力。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/TTGti2bi7JLwvHfGvyapPR.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/PawniEsB6bzPoS67XbfAx7.png', sentences: [{ en: "I know you have language courses and your favourite subject is Chinese, but I like English best.", cn: "我知道你在上语言课，你最喜欢的科目是语文，但我最喜欢英语。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/aHMEiAj2yM2WDeNmGuDNbP.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/coGfokGiTX3bToCkmP4RXX.png', sentences: [{ en: "I have learned every word by heart from the book!", cn: "书上的每个单词我都用心背熟了！" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/fqyHYovgayeQzV6XjYLk9e.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/jCUZ4jG3p2wLKaNfdPEijj.png', sentences: [{ en: "After class, I play soccer every Wednesday and Friday.", cn: "课后，我每周三和周五踢足球。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/f6BSF6MB4fMiPN4F6xymMj.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/7sBFcNtMoMJZSyLuAQw7cU.png', sentences: [{ en: "I have music class only once a week, but it's really a good time to relax.", cn: "我每周只有一次音乐课，但这确实是放松的好时候。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/YehFh9cbvKB4mKZnrFzLzi.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/5yPA75LzGmFiA5KHSBfiCJ.png', sentences: [{ en: "Last month, there was an art festival in my school and many students showed their talents on stage.", cn: "上个月，我们学校举办了艺术节，很多学生都上台展示了自己的才艺。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/b24PEN2baMoshSm2vivsJA.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/TMbtRgVGxziPGvwhmS9GvT.png', sentences: [{ en: "It was exciting.", cn: "真是令人兴奋。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/gqvutdyUNJYtoJvJr4iuKg.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/LSCJrhHfnuiuKmxNeAu8tP.png', sentences: [{ en: "I hope to take part in the festival next year.", cn: "我希望明年还能参加艺术节。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/oBahrSmSQ3T7aziCKsRX2m.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/HjzxmZznsvSgiEjRGfUE8V.png', sentences: [{ en: "Next Saturday, December 30th, I want to have a party in my home to celebrate my birthday.", cn: "下周六，12月30日，我想在家里开个派对庆祝我的生日。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/FtRLarZag4dDcoe3TumtWD.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/RUKVXj98qqWiQ4Ek2nrU5n.png', sentences: [{ en: "Can you come and light candles for me?", cn: "你能来参加并帮我点蜡烛吗？" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/MPAz566Zpvgcn66mBTLTwM.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/RJQYRkgBD4KNAcVjAaZ9Bh.png', sentences: [{ en: "I really hope you can make it.", cn: "我真的希望你能来。" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/kD5bVanHGpETn9KV6sZwYB.mp3" },
+      { image: 'https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/20/H2LsCKecrFnLgiRB5dfzTP.png', sentences: [{ en: "Best Wishes, Mary", cn: "最美好的祝愿，玛丽" }], audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/LpRBXruFhfvue7b6MTb5en.mp3" }
+    ];
+
+    const dictionary = {
+      // 核心单词
+      "dear": { phonetic: "[dɪə(r)]", translation: "adj. 亲爱的；宝贵的；n.（称呼所爱的人）亲爱的", phrases: "Dear+名字（用于信函）亲爱的某人", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/Jjv2jHbSZ9acHbe6Skncpm.mp3" },
+      "sorry": { phonetic: "[ˈsɒri]", translation: "int. 对不起，很抱歉；adj. 抱歉的；难过的", memory: "音律记忆——听完这个story（故事），感觉非常sorry（难过的）", phrases: "be sorry for 对……感到抱歉", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/ZkSmp4ToZDNJCXK7fJkyqY.mp3" },
+      "bell": { phonetic: "[bel]", translation: "n. 钟；铃", phrases: "bicycle bell 自行车铃", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/9zTBHkX3fDTcEMFxdzvBC3.mp3" },
+      "ring": { phonetic: "[rɪŋ]", translation: "v.（铃）响；给……打电话；n. 环形物；戒指", memory: "发音记忆——电话铃声听起来很像ring、ring、ring →（铃）响", phrases: "key ring 钥匙环", variationNote: "过去式 rang", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/wSW6Vny3DmByJryU53DGB2.mp3" },
+      "Chinese": { phonetic: "[ˌtʃaɪˈniːz]", translation: "n. 中国人；汉语；adj. 中国的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/AdJqsUeZqRyDA3B7YkVytf.mp3" },
+      "parent": { phonetic: "[ˈpeərənt]", translation: "n. 父亲；母亲", phrases: "Parents' Day 家长日", variationNote: "复数形式 parents 父母", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/q2xkueqRdnVae9S4qixmJf.mp3" },
+      "useful": { phonetic: "[ˈjuːsfl]", translation: "adj. 有用的，有益的", memory: "词根记忆——use（使用）+ ful（形容词后缀）→有用的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/B24AAjCUpR26YdkTrMAnPA.mp3" },
+      "try": { phonetic: "[traɪ]", translation: "n./v. 尝试；试图", memory: "联想记忆——跟dry（干燥的）一起记", phrases: "have a try 试一试；let me try 让我试试；try on 试穿……；try to do 努力做……", variationNote: "第三人称单数形式 tries；过去式 tried", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/sUFAzVxtdrbcUGnvTV5nt9.mp3" },
+      "hard": { phonetic: "[hɑːd]", translation: "adj. 难的；坚硬的；adv. 猛烈地；努力地；仔细地", phrases: "work hard 努力工作", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/CibaD6JMzqdcRixfnmib6a.mp3" },
+      "language": { phonetic: "[ˈlæŋɡwɪdʒ]", translation: "n. 语言", phrases: "foreign language 外语", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/TSAKDtFLrsFgwHSNHWMDuJ.mp3" },
+      "course": { phonetic: "[kɔːs]", translation: "n. 课程；进程；航线", memory: "发音记忆——考试→上课玩，考试难→课程", phrases: "of course 当然", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/dtKAqTYE4LjwQZ4TjkvU6o.mp3" },
+      "subject": { phonetic: "[ˈsʌbdʒɪkt; ˈsʌbdʒekt]", translation: "n. 学科，课程，科目；主题，话题", variationNote: "科目：geography（地理）、physics（物理）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/iCYzEqFJ5bTcx24YcyLViQ.mp3" },
+      "word": { phonetic: "[wɜːd]", translation: "n. 单词；字；话语", memory: "联想记忆：word（话语）连接world（世界）", phrases: "in other words 换句话说；spell a word 拼写单词", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/yV6SnY9id2wk6XLgKhrbCg.mp3" },
+      "heart": { phonetic: "[hɑːt]", translation: "n. 心脏；内心；爱心", memory: "联想记忆：hear（听见）+ t（音似：他）→听见他心脏跳动的声音→心脏", phrases: "by heart 背诵，记忆；heart trouble 心脏病", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/mBKi95C2BMrzSigjkmGZCj.mp3" },
+      "soccer": { phonetic: "[ˈsɒkə(r)]", translation: "n. 足球", phrases: "play soccer 踢足球", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/WbnxJ9Lp7zsTuq8WBwt6q3.mp3" },
+      "Wednesday": { phonetic: "[ˈwenzdeɪ]", translation: "n. 星期三", variationNote: "星期：Tuesday（星期二）、Thursday（星期四）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/bdP26yonCiT9rX8S5bCWnc.mp3" },
+      "Friday": { phonetic: "[ˈfraɪdeɪ]", translation: "n. 星期五", variationNote: "星期：Tuesday（星期二）、Thursday（星期四）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/CFemU8BMcoxGQRtxuvf6wa.mp3" },
+      "once": { phonetic: "[wʌns]", translation: "adv. 一次；曾经；一旦", phrases: "once a week 一周一次；once upon a time 从前", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/spgYwdZxT2Kg2ZkHCCyyAi.mp3" },
+      "week": { phonetic: "[wiːk]", translation: "n. 星期；一周", phrases: "twice a week 一周两次", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/gsJ3ybXodyoHXCFZsAReaP.mp3" },
+      "relax": { phonetic: "[rɪˈlæks]", translation: "v. 放松，（使）松弛；放宽（限制等）", variationNote: "名词形式：relaxation（放松）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/DanAiGzktqL6JQvM3Pf7YF.mp3" },
+      "festival": { phonetic: "[ˈfestɪvl]", translation: "n. 节日", variationNote: "中国传统节日：Chinese New Year（春节）、the Lantern Festival（元宵节）、the Dragon Boat Festival（端午节）、the Double Ninth Festival（重阳节）、the Mid-Autumn Festival（中秋节）、Eve of the Spring Festival（除夕）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/MwWpFm4E8vm5YLntcr786B.mp3" },
+      "talent": { phonetic: "[ˈtælənt]", translation: "n. 天资，才能；人才", memory: "联想记忆：tal（看作tall，高的）+ ent → 高手→人才", variationNote: "形容词形式：talented（有才能的；天才的）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/bn5Gf2aA2hoywrFxTfiT9Q.mp3" },
+      "stage": { phonetic: "[steɪdʒ]", translation: "n. 舞台", memory: "联想记忆：站在stage（舞台）上就忘了自己的age（年龄）", phrases: "on stage 在舞台上", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/vHErRE4ag5rnaGMPEnA8cP.mp3" },
+      "exciting": { phonetic: "[ɪkˈsaɪtɪŋ]", translation: "adj. 刺激的，令人兴奋的，使人激动的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/tnhDAXzkELiykVbDSHFe76.mp3" },
+      "Saturday": { phonetic: "[ˈsætədeɪ]", translation: "n. 星期六", variationNote: "星期：Tuesday（星期二）、Thursday（星期四）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/UXQsCkLLschXxQ2UGd5Gob.mp3" },
+      "December": { phonetic: "[dɪˈsembə(r)]", translation: "n. 十二月", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/RDUp4F2sxEwAfn9F8BVMeh.mp3" },
+      "party": { phonetic: "[ˈpɑːti]", translation: "n. 联欢会；聚会，派对", memory: "联想记忆：party（聚会）是我们生活中的一个part（部分）", phrases: "go to the party 参加聚会", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/uhDKAM93vnTtk8cL4orrzJ.mp3" },
+      "celebrate": { phonetic: "[ˈselɪbreɪt]", translation: "v. 庆祝（庆典）", variationNote: "名词形式：celebration（庆祝）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/DFo6kf9SbiuXxhd8RVZZK8.mp3" },
+      "birthday": { phonetic: "[ˈbɜːθdeɪ]", translation: "n. 生日", memory: "合成词：birth（出生）+ day（天）→出生的那天→生日", phrases: "birthday cake 生日蛋糕；birthday party 生日聚会", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/A8SdR5dm6QmhcW5rE7vSiG.mp3" },
+      "candle": { phonetic: "[ˈkændl]", translation: "n. 蜡烛", memory: "举着candle（蜡烛）找candy（糖果）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/XuZbhf8S5gw94mtNHTSWB4.mp3" },
+      "wish": { phonetic: "[wɪʃ]", translation: "v. 祝愿；希望；想要；n. 愿望；祝福；心愿", memory: "祝（wish）您年年有余（谐音'鱼'fish）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/BdisDgStb262rELMZhYTaD.mp3" },
+      
+      // 非核心单词
+      "a": { phonetic: "[ə]", translation: "art. 一；一个", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/iQm2RbUZGvhD24t3nAXcti.mp3" },
+      "letter": { phonetic: "[ˈletə(r)]", translation: "n. 信；字母", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/3ivbzvYdnJ2RCeEbhnGkSg.mp3" },
+      "to": { phonetic: "[tu]", translation: "prep. 向；到", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/2KfYerwNv4kTZrZrEroyKg.mp3" },
+      "jenny": { phonetic: "[ˈdʒeni]", translation: "n. 珍妮（人名）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/sy6zEMppjce3Rw9qE2AiVE.mp3" },
+      "by": { phonetic: "[baɪ]", translation: "prep. 被；由；在…旁边", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/SHFVdVxQV2gEweK2oC8RmH.mp3" },
+      "mary": { phonetic: "[ˈmeəri]", translation: "n. 玛丽（人名）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/Z6wT8nZPB65qHQjt2qnkjc.mp3" },
+      "i'm": { phonetic: "[aɪm]", translation: "abbr. I am 的缩写", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/BuX9Z5UfruQo22n23KwTsj.mp3" },
+      "that": { phonetic: "[ðæt]", translation: "pron. 那；那个", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/8qUuppm28z5kL9LcRAfqmB.mp3" },
+      "we": { phonetic: "[wi]", translation: "pron. 我们", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/eRNmnEAJYmcNSYDTobAqY2.mp3" },
+      "can't": { phonetic: "[kɑːnt]", translation: "v. 不能", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/7a2GAJZSDEUNmj4Nft2zyn.mp3" },
+      "meet": { phonetic: "[miːt]", translation: "v. 遇见；相遇", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/8KyztVd2wwZx3gyyGaL9o2.mp3" },
+      "very": { phonetic: "[ˈveri]", translation: "adv. 非常；很", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/hczDVt3NGW4TQhy3iKWbKV.mp3" },
+      "often": { phonetic: "[ˈɒfn]", translation: "adv. 经常；常常", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/ASTvdbtPywkTM5VVAqT4A7.mp3" },
+      "i": { phonetic: "[aɪ]", translation: "pron. 我", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/jWUECcLY49BY27B9UdU3od.mp3" },
+      "am": { phonetic: "[æm]", translation: "v. 是", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/4E62iZMFRdy9m8jy2rArtH.mp3" },
+      "busy": { phonetic: "[ˈbɪzi]", translation: "adj. 忙碌的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/SL8myeY5UXdSxYz5VMpR79.mp3" },
+      "every": { phonetic: "[ˈevri]", translation: "adj. 每一；每个", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/Q2NE8734nbV86ceWoyDvDd.mp3" },
+      "day": { phonetic: "[deɪ]", translation: "n. 一天；白天", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/R6kCGDMmaLGHxFRCUKMqTK.mp3" },
+      "when": { phonetic: "[wen]", translation: "adv. 什么时候；当...时", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/LG4ejQpjs49wJCgdPMKWGE.mp3" },
+      "the": { phonetic: "[ðə]", translation: "art. 这；那", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/CWbYYVdvpeJouiP7dV8iM8.mp3" },
+      "first": { phonetic: "[fɜːst]", translation: "num. 第一", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/eGitWv3kbAFoW4VVr5n9k6.mp3" },
+      "class": { phonetic: "[klɑːs]", translation: "n. 班级；课", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/JmUkQVVoDNcTuf3jTKXqfV.mp3" },
+      "start": { phonetic: "[stɑːt]", translation: "v. 开始", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/SbYjpdFQypBeJmEMrWFy7G.mp3" },
+      "at": { phonetic: "[æt]", translation: "prep. 在...", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/6Xkb5vPdmxLRzFeXo7yyYh.mp3" },
+      "eight": { phonetic: "[eɪt]", translation: "num. 八", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/Aq3ZVNYRYyyGwSD2Ggwpfj.mp3" },
+      "a.m.": { phonetic: "[ˌeɪ ˈem]", translation: "abbr. 上午", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/gCT9bkzqKQX4nGvm9SdBH6.mp3" },
+      "have": { phonetic: "[hæv]", translation: "v. 有；吃；喝", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/SnyQ4yWqZ7JCzuzMcMbzgA.mp3" },
+      "maths": { phonetic: "[mæθs]", translation: "n. 数学", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/yfSJE8kBhGqt3ngDi3MATD.mp3" },
+      "and": { phonetic: "[ænd]", translation: "conj. 和；与", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/Srbjwrmd6qH5R2MLiL72Df.mp3" },
+      "english": { phonetic: "[ˈɪŋɡlɪʃ]", translation: "n. 英语", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/hE6w7pSmWJZDEmiYuS2ju6.mp3" },
+      "don't": { phonetic: "[dəʊnt]", translation: "v. 不（do not的缩写）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/3uCjSaoL6D4tBAWG7DTKUQ.mp3" },
+      "like": { phonetic: "[laɪk]", translation: "v. 喜欢；prep. 像", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/9LdXFVnXmF5v6EtB9V78z5.mp3" },
+      "but": { phonetic: "[bʌt]", translation: "conj. 但是", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/eEznKoJP7c2vCGhy6EoDkS.mp3" },
+      "my": { phonetic: "[maɪ]", translation: "pron. 我的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/GM2Jo34qkjLmPHFU7RMxFd.mp3" },
+      "say": { phonetic: "[seɪ]", translation: "v. 说", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/38CH876wCMgFMCaZjHhgz4.mp3" },
+      "it's": { phonetic: "[ɪts]", translation: "abbr. 它是（it is的缩写）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/LLDnWnuUm9QxUXUEn4U7VV.mp3" },
+      "so": { phonetic: "[səʊ]", translation: "conj. 所以；adv. 如此", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/XBvQ8ae25EXnsh8Zb7G9P5.mp3" },
+      "must": { phonetic: "[mʌst]", translation: "v. 必须", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/nLtYYBCJLpgewJ3hBk2obk.mp3" },
+      "harder": { phonetic: "[hɑːdə(r)]", translation: "adv. 更努力地", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/wahqsJmSA6GXE64wvxF34X.mp3" },
+      "know": { phonetic: "[nəʊ]", translation: "v. 知道", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/LUajAs5zxczjHo6tPUmwqa.mp3" },
+      "you": { phonetic: "[ju]", translation: "pron. 你；你们", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/x5Gaam8neVAKJAJnxLev8c.mp3" },
+      "your": { phonetic: "[jɔː(r)]", translation: "pron. 你的；你们的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/S2rfFtDtAWCiwSgSet5dgh.mp3" },
+      "favourite": { phonetic: "[ˈfeɪvərɪt]", translation: "adj. 最喜爱的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/4oFZRrNBNuQAwSvnXiCL8m.mp3" },
+      "is": { phonetic: "[ɪz]", translation: "v. 是", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/DMn9Sm3RZrVXTNz8t6bPLF.mp3" },
+      "best": { phonetic: "[best]", translation: "adj. 最好的；adv. 最好地", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/knJNckidm8jspAF7Wg8Rb4.mp3" },
+      "learn": { phonetic: "[lɜːn]", translation: "v. 学习", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/cA925zfUbzZUD8TUNZgkF8.mp3" },
+      "from": { phonetic: "[frɒm]", translation: "prep. 来自；从...", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/JYjanYSroXkK4fKpVwGXPL.mp3" },
+      "book": { phonetic: "[bʊk]", translation: "n. 书", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/AyyPBtwL9dUAbBPzKuadAn.mp3" },
+      "after": { phonetic: "[ˈɑːftə(r)]", translation: "prep. 在...之后", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/w2QDHXthUnu9LJpqu3AVX5.mp3" },
+      "play": { phonetic: "[pleɪ]", translation: "v. 玩；播放", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/KPbMAwd2pqNHE9dznb74cR.mp3" },
+      "music": { phonetic: "[ˈmjuːzɪk]", translation: "n. 音乐", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/bvuLDRsFZM8x67hMGojuVD.mp3" },
+      "only": { phonetic: "[ˈəʊnli]", translation: "adv. 只；仅仅", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/FjeN2Ak6kps2e7bdJKeGeK.mp3" },
+      "really": { phonetic: "[ˈriːəli]", translation: "adv. 真正地；确实", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/PcZyUtgohp4VgwpVfptmT3.mp3" },
+      "good": { phonetic: "[ɡʊd]", translation: "adj. 好的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/ZrV9hu4dHggFD3AwfzDGEn.mp3" },
+      "time": { phonetic: "[taɪm]", translation: "n. 时间；次数", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/uzx6eNqz82ekcheYcJCcRB.mp3" },
+      "last": { phonetic: "[lɑːst]", translation: "adj. 最后的；上一个的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/ut82VQ3uwJnu7zUveg4Dm6.mp3" },
+      "month": { phonetic: "[mʌnθ]", translation: "n. 月", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/jbSWYGqwznvDLVnUVHmUSk.mp3" },
+      "there": { phonetic: "[ðeə(r)]", translation: "adv. 在那里", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/mUkXxf4ieEDRYRDyj2CdxW.mp3" },
+      "was": { phonetic: "[wɒz]", translation: "v. 是（is/am的过去式）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/LMp4Y3wWPfattKZLRvddt4.mp3" },
+      "an": { phonetic: "[æn]", translation: "art. 一个（元音前）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/V5oiefy4ufWoMCpAremnzG.mp3" },
+      "art": { phonetic: "[ɑːt]", translation: "n. 艺术；美术", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/qzK3Xrt85csTCqtP6mUBpZ.mp3" },
+      "in": { phonetic: "[ɪn]", translation: "prep. 在...里面", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/Cu6ptnfgA8JVGCRWfNd379.mp3" },
+      "school": { phonetic: "[skuːl]", translation: "n. 学校", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/MyGpCDF9AYvbishsq5QDWM.mp3" },
+      "many": { phonetic: "[ˈmeni]", translation: "adj. 许多的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/j6jkBnGJfwJRnQZM6unzrE.mp3" },
+      "student": { phonetic: "[ˈstjuːdnt]", translation: "n. 学生", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/PciweqGj9i5SvuskSC8FCW.mp3" },
+      "show": { phonetic: "[ʃəʊ]", translation: "v. 展示；给...看", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/p6gSwtM5dY8yrueELRsrKm.mp3" },
+      "their": { phonetic: "[ðeə(r)]", translation: "pron. 他们的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/GBGdr8dZx3E44GGEEyzG37.mp3" },
+      "on": { phonetic: "[ɒn]", translation: "prep. 在...上面", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/Tq6GdNjKCz2vwo4QxBZduA.mp3" },
+      "it": { phonetic: "[ɪt]", translation: "pron. 它", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/qwMNeCFTBM9NUL8DsYcKne.mp3" },
+      "hope": { phonetic: "[həʊp]", translation: "v. 希望", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/AQBWGx6ijEgerap6oTr4ui.mp3" },
+      "take": { phonetic: "[teɪk]", translation: "v. 拿；取；花费", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/xxYKHkFCVA9FtPwDt7FeWc.mp3" },
+      "part": { phonetic: "[pɑːt]", translation: "n. 部分；角色", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/tADwFNDjhBcr3yPQnnkqK3.mp3" },
+      "next": { phonetic: "[nekst]", translation: "adj. 下一个的", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/87Z99g2qWYgshXZoTykeJE.mp3" },
+      "year": { phonetic: "[jɪə(r)]", translation: "n. 年", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/jayHwnE8386UErrALPmaxW.mp3" },
+      "thirtieth": { phonetic: "[ˈθɜːtiəθ]", translation: "num. 第三十", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/gSsmf6fwLi5qUUzpi5K8Cf.mp3" },
+      "want": { phonetic: "[wɒnt]", translation: "v. 想要", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/ktDJ3z52s39dvt8CEMd228.mp3" },
+      "home": { phonetic: "[həʊm]", translation: "n. 家", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/WY38gj8mvjrd5LtcT2i2ka.mp3" },
+      "can": { phonetic: "[kæn]", translation: "v. 能；会", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/3wwY9EbYXgRpCKjEQot8ye.mp3" },
+      "come": { phonetic: "[kʌm]", translation: "v. 来", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/gHd6K2t6Dvgkq6SHuoetnN.mp3" },
+      "light": { phonetic: "[laɪt]", translation: "n. 光；灯；v. 点燃", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/6mAZDxduS35cfj23TqwH8H.mp3" },
+      "for": { phonetic: "[fɔː(r)]", translation: "prep. 为了；给", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/3992eupVfG2H7s99DNdNYH.mp3" },
+      "me": { phonetic: "[mi]", translation: "pron. 我（宾格）", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/zayvEJdzSWnrPvKMPDNtv9.mp3" },
+      "make": { phonetic: "[meɪk]", translation: "v. 制作；使得", audio: "https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/audio/P7vUPTRaHPfGPUogAt99HB.mp3" }
+    };
+
+    const wordVariations = {
+      'parents': 'parent',
+      'maths': 'maths',
+      'courses': 'course',
+      'favourite': 'favourite',
+      'learned': 'learn',
+      'class': 'class',
+      'music': 'music',
+      'really': 'really',
+      'good': 'good',
+      'time': 'time',
+      'last': 'last',
+      'month': 'month',
+      'art': 'art',
+      'school': 'school',
+      'many': 'many',
+      'students': 'student',
+      'showed': 'show',
+      'talents': 'talent',
+      'hope': 'hope',
+      'take': 'take',
+      'part': 'part',
+      'next': 'next',
+      'year': 'year',
+      'home': 'home',
+      'candles': 'candle',
+      'make': 'make',
+      'best': 'best',
+      'wishes': 'wish',
+      // 补充非核心单词的变体映射
+      'rings': 'ring',
+      'starts': 'start',
+      'say': 'say',
+      'try': 'try',
+      'know': 'know',
+      'play': 'play',
+      'want': 'want',
+      'come': 'come',
+      'light': 'light'
+    };
+
+    let currentPage = 0;
+    let isReading = false;
+    let readAllMode = false;
+    let translationVisible = false;
+    let recognition = null;
+    let isRecording = false;
+    let isFollowReadMode = false;
+    const storyPlayer = document.getElementById('storyPlayer');
+    const wordPlayer = document.getElementById('wordPlayer');
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+    }
+
+    function renderPage(idx) {
+      const page = bookData[idx];
+      const content = document.getElementById('bookContent');
+      let html = `<img src="${page.image}" class="page-image">`;
+      html += '<div class="text-container">';
+      page.sentences.forEach((s, i) => {
+        html += `<div class="sentence">`;
+        s.en.split(/(\s+|[,."?!])/).forEach((w, wi) => {
+          if (w.trim() && w.match(/[a-zA-Z]/)) {
+            const clean = w.replace(/[,."?!]/g, '');
+            html += `<span class="word" data-word="${clean}">${w}</span>`;
+          } else { html += w; }
+        });
+        html += `</div><div class="chinese-translation ${translationVisible ? '' : 'hidden'}">${s.cn}</div>`;
+      });
+      html += '</div>';
+      content.innerHTML = html;
+      document.querySelectorAll('.word').forEach(el => el.addEventListener('click', handleWordClick));
+      document.getElementById('pageIndicator').textContent = `第 ${idx + 1} 页 / 共 ${bookData.length} 页`;
+      document.getElementById('prevBtn').disabled = idx === 0;
+      document.getElementById('nextBtn').disabled = idx === bookData.length - 1;
+    }
+
+    function handleWordClick(e) {
+      const target = e.target;
+      const clickedWord = target.dataset.word;
+      
+      let prototypeWord = clickedWord;
+      let data = dictionary[clickedWord];
+      
+      // 尝试查找原型或变体
+      if (!data) {
+        if (wordVariations[clickedWord.toLowerCase()]) {
+          prototypeWord = wordVariations[clickedWord.toLowerCase()];
+          data = dictionary[prototypeWord];
+        } else if (dictionary[clickedWord.toLowerCase()]) {
+          prototypeWord = clickedWord.toLowerCase();
+          data = dictionary[prototypeWord];
+        }
+      }
+
+      // 播放音频（优先使用 dictionary 中的音频）
+      if (data && data.audio) {
+        wordPlayer.src = data.audio;
+        wordPlayer.play();
+      } else {
+        // 兜底：使用浏览器合成语音
+        const u = new SpeechSynthesisUtterance(clickedWord);
+        u.lang = 'en-US';
+        speechSynthesis.speak(u);
+      }
+
+      target.classList.add('clicked');
+      setTimeout(() => target.classList.remove('clicked'), 1000);
+      
+      // 显示信息
+      if (data) {
+        // 如果有详细信息（记忆法、短语等），显示大弹窗
+        if (data.memory || data.phrases || data.variationNote) {
+          showPopup(prototypeWord, data);
+        } else {
+          // 否则（非核心单词），显示简单的 Tooltip（包含音标和翻译）
+          showSimpleTooltip(target, prototypeWord, data);
+        }
+      } else {
+        // 完全未收录的单词
+        showSimpleTooltip(target, clickedWord, { translation: '暂无释义', phonetic: '' });
+      }
+    }
+
+    function showSimpleTooltip(element, word, data) {
+      const old = document.querySelector('.simple-tooltip'); if(old) old.remove();
+      const tooltip = document.createElement('div'); tooltip.className = 'simple-tooltip';
+      // 确保显示音标和翻译
+      tooltip.innerHTML = `<div style="font-weight:bold;margin-bottom:2px">${word} <span style="font-weight:normal;opacity:0.8;font-family:Arial;font-size:12px">${data.phonetic||''}</span></div><div>${data.translation}</div>`;
+      document.body.appendChild(tooltip);
+      const rect = element.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+      tooltip.style.top = (rect.top + scrollTop) + 'px';
+      tooltip.style.left = (rect.left + scrollLeft + rect.width / 2) + 'px';
+      requestAnimationFrame(() => tooltip.classList.add('visible'));
+      setTimeout(() => { tooltip.classList.remove('visible'); setTimeout(() => tooltip.remove(), 200); }, 3000);
+    }
+
+    function showPopup(word, data) {
+      const overlay = document.createElement('div'); overlay.className = 'overlay';
+      const popup = document.createElement('div'); popup.className = 'word-popup';
+      popup.innerHTML = `<div class="popup-header"><div class="popup-word">${word}</div><div class="popup-phonetic">${data.phonetic||''}</div><div style="margin-top:12px;font-size:20px">${data.translation}</div></div>` +
+        (data.memory ? `<div class="detail-card"><span class="detail-label">💡 记忆</span>${data.memory}</div>` : '') +
+        (data.phrases ? `<div class="detail-card"><span class="detail-label">🔗 搭配</span>${data.phrases}</div>` : '') +
+        (data.variationNote ? `<div class="detail-card"><span class="detail-label">📝 备注</span>${data.variationNote}</div>` : '') +
+        `<div style="text-align:center;margin-top:24px"><button class="btn btn-success" onclick="playWordAudio('${data.audio}')">🔊 发音</button><button class="btn btn-primary" onclick="closePopup()" style="margin-left:12px">✅ 关闭</button></div>`;
+      overlay.onclick = closePopup;
+      document.body.append(overlay, popup);
+      window.currPopup = { overlay, popup };
+    }
+
+    window.closePopup = () => { if(window.currPopup) { window.currPopup.overlay.remove(); window.currPopup.popup.remove(); window.currPopup = null; }};
+    
+    window.playWordAudio = (url) => {
+      if (url && url !== 'undefined') {
+        wordPlayer.src = url;
+        wordPlayer.play();
+      }
+    };
+
+    function readPage() {
+      if (isReading) {
+        storyPlayer.pause();
+        isReading = false;
+        document.getElementById('readPageBtn').textContent = '🔊 朗读本页';
+        return;
+      }
+      
+      const audioUrl = bookData[currentPage].audio;
+      if (audioUrl) {
+        storyPlayer.src = audioUrl;
+        storyPlayer.play();
+        isReading = true;
+        document.getElementById('readPageBtn').textContent = '⏸️ 暂停';
+        
+        storyPlayer.onended = () => {
+          isReading = false;
+          document.getElementById('readPageBtn').textContent = '🔊 朗读本页';
+        };
+      }
+    }
+
+    function readAll() {
+      if (readAllMode) {
+        storyPlayer.pause();
+        readAllMode = false;
+        document.getElementById('readAllBtn').textContent = '▶️ 自动播放';
+        return;
+      }
+      readAllMode = true;
+      document.getElementById('readAllBtn').textContent = '⏸️ 暂停播放';
+      playSequence(currentPage);
+    }
+
+    function playSequence(idx) {
+      if (!readAllMode || idx >= bookData.length) {
+        readAllMode = false;
+        document.getElementById('readAllBtn').textContent = '▶️ 自动播放';
+        return;
+      }
+      
+      if (idx !== currentPage) {
+        currentPage = idx;
+        renderPage(idx);
+      }
+      
+      const audioUrl = bookData[idx].audio;
+      if (audioUrl) {
+        storyPlayer.src = audioUrl;
+        storyPlayer.play();
+        storyPlayer.onended = () => {
+          if (readAllMode) {
+            setTimeout(() => playSequence(idx + 1), 1500);
+          }
+        };
+      }
+    }
+
+    function startFollow() {
+      if (!recognition) return alert('请使用Chrome浏览器');
+      if (isRecording) { recognition.stop(); return; }
+      if (isFollowReadMode) { isFollowReadMode = false; document.getElementById('readingMode').style.display = 'none'; document.getElementById('followReadBtn').textContent = '🎤 跟读挑战'; return; }
+      isFollowReadMode = true; document.getElementById('readingMode').style.display = 'block'; document.getElementById('followReadBtn').textContent = '⏹️ 退出跟读';
+      document.getElementById('feedbackContainer').style.display = 'none'; document.getElementById('scoreDisplay').textContent = ''; document.getElementById('starsDisplay').textContent = '';
+      let count = 3; const cEl = document.getElementById('countdown'); cEl.textContent = count;
+      const t = setInterval(() => { count--; if(count>0) cEl.textContent = count; else { clearInterval(t); cEl.textContent = 'GO!'; setTimeout(() => { cEl.textContent = ''; record(); }, 500); } }, 1000);
+    }
+
+    function record() {
+      isRecording = true; document.getElementById('readingStatus').textContent = '🎤 正在录音...';
+      recognition.onresult = (e) => { evaluate(e.results[0][0].transcript, e.results[0][0].confidence); };
+      recognition.onend = () => { isRecording = false; };
+      recognition.start();
+    }
+
+    function evaluate(spoken, conf) {
+      const target = bookData[currentPage].sentences.map(s => s.en).join(' ').toLowerCase().replace(/[.,?!]/g, '').split(/\s+/);
+      const words = spoken.toLowerCase().replace(/[.,?!]/g, '').split(/\s+/);
+      let match = 0; const fb = [];
+      target.forEach(w => { const ok = words.includes(w); if(ok) match++; fb.push({word: w, correct: ok}); });
+      const score = Math.round((match / target.length) * 100);
+      document.getElementById('scoreDisplay').textContent = score + '分';
+      document.getElementById('starsDisplay').textContent = score >= 90 ? '⭐⭐⭐' : (score >= 60 ? '⭐⭐' : '⭐');
+      document.getElementById('readingStatus').textContent = score >= 80 ? '🎉 太棒了！' : '💪 继续加油！';
+      const fbList = document.getElementById('feedbackList'); fbList.innerHTML = '';
+      fb.forEach(item => {
+        const div = document.createElement('div'); div.className = `feedback-item ${item.correct ? 'correct' : 'incorrect'}`;
+        div.innerHTML = `<span>${item.correct ? '✅' : '❌'}</span> <strong>${item.word}</strong>`;
+        div.onclick = () => {
+           if (dictionary[item.word] && dictionary[item.word].audio) {
+             wordPlayer.src = dictionary[item.word].audio;
+             wordPlayer.play();
+           } else {
+             const u = new SpeechSynthesisUtterance(item.word);
+             speechSynthesis.speak(u);
+           }
+        };
+        fbList.appendChild(div);
+      });
+      document.getElementById('feedbackContainer').style.display = 'block';
+    }
+
+    document.getElementById('prevBtn').onclick = () => { if(currentPage > 0) { currentPage--; renderPage(currentPage); storyPlayer.pause(); isReading = false; document.getElementById('readPageBtn').textContent = '🔊 朗读本页'; }};
+    document.getElementById('nextBtn').onclick = () => { if(currentPage < bookData.length - 1) { currentPage++; renderPage(currentPage); storyPlayer.pause(); isReading = false; document.getElementById('readPageBtn').textContent = '🔊 朗读本页'; }};
+    document.getElementById('readPageBtn').onclick = readPage;
+    document.getElementById('readAllBtn').onclick = readAll;
+    document.getElementById('followReadBtn').onclick = startFollow;
+    document.getElementById('toggleTransBtn').onclick = () => { translationVisible = !translationVisible; renderPage(currentPage); };
+    document.getElementById('retryBtn').onclick = startFollow;
+    document.getElementById('closeBtn').onclick = () => { isFollowReadMode = false; document.getElementById('readingMode').style.display = 'none'; document.getElementById('followReadBtn').textContent = '🎤 跟读挑战'; };
+    
+    const audioBtn = document.getElementById('playFullAudioBtn');
+    audioBtn.onclick = () => {
+      if (readAllMode) {
+        readAll();
+        audioBtn.textContent = '🎵 完整故事磨耳朵';
+      } else {
+        currentPage = 0;
+        renderPage(0);
+        readAll();
+        audioBtn.textContent = '⏹️ 停止播放';
+      }
+    };
+
+    window.onload = () => { renderPage(0); };
+  </script>
+
+</body></html>
